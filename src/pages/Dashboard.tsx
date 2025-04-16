@@ -4,6 +4,7 @@ import MachineStatus from '../components/MachineStatus';
 import LiveChart from '../components/LiveChart';
 import AlertPanel from '../components/AlertPanel';
 import MachineSelector from '../components/MachineSelector';
+import DataTable from '../components/DataTable';
 
 const Dashboard: React.FC = () => {
   const [selectedMachine, setSelectedMachine] = useState('Machine-H1');
@@ -17,9 +18,9 @@ const Dashboard: React.FC = () => {
             <Settings className="h-8 w-8 text-blue-600" />
             <h1 className="text-2xl font-bold text-gray-900">Machine Dashboard</h1>
           </div>
-          <MachineSelector 
-            selectedMachine={selectedMachine} 
-            onMachineChange={setSelectedMachine} 
+          <MachineSelector
+            selectedMachine={selectedMachine}
+            onMachineChange={setSelectedMachine}
           />
         </div>
       </div>
@@ -67,7 +68,12 @@ const Dashboard: React.FC = () => {
               </div>
               <LiveChart />
             </div>
-
+            <div className="container mx-auto px-4 py-8">
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Machine Data</h2>
+                <DataTable />
+              </div>
+            </div>
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Performance Metrics</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
