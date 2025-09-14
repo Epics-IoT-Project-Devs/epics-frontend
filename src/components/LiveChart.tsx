@@ -40,7 +40,8 @@ const LiveChart: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/');
+        const apiUrl = import.meta.env.VITE_API_URL as string | undefined;
+        const response = await fetch(apiUrl ?? '/api/');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -50,8 +51,11 @@ const LiveChart: React.FC = () => {
         const dataArray = Array.isArray(data) ? data : [data];
         
         // Extract labels (ids) and prediction scores
-        const labels = dataArray.map((item: DataPoint) => item.id.toString());
-        const scores = dataArray.map((item: DataPoint) => item.prediction_score);
+        const labels = dataArray.map((item: DataPoint) => String(item?.id ?? ''));
+        const scores = dataArray.map((item: DataPoint) => {
+          const val = (item as any)?.prediction_score;
+          return typeof val === 'number' && isFinite(val) ? val : 0;
+        });
         
         setChartData({
           labels,
