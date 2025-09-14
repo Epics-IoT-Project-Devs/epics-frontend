@@ -26,7 +26,8 @@ const DataTable: React.FC = () => {
       try {
         setLoading(true);
         // Use the exact same URL as in your working LiveChart component
-        const response = await fetch(`${import.meta.env.VITE_API_URL}`);
+        const apiUrl = import.meta.env.VITE_API_URL as string | undefined;
+        const response = await fetch(apiUrl ?? '/api/');
         
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -95,7 +96,7 @@ const DataTable: React.FC = () => {
               <td className="py-2 px-4 border-b">{item.air_temp}</td>
               <td className="py-2 px-4 border-b">{item.process_temp}</td>
               {/* <td className="py-2 px-4 border-b">{item.temp_diff}</td> */}
-              <td className="py-2 px-4 border-b">{item.power.toFixed(3)}</td>
+              <td className="py-2 px-4 border-b">{(typeof item.power === 'number' && isFinite(item.power)) ? item.power.toFixed(3) : '—'}</td>
               <td className="py-2 px-4 border-b">
                 <span className={`px-2 py-1 rounded-full text-xs ${
                   item.prediction_label === 1 ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'
@@ -107,13 +108,16 @@ const DataTable: React.FC = () => {
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div 
                     className={`h-2.5 rounded-full ${
-                      item.prediction_score > 0.75 ? 'bg-red-600' : 
-                      item.prediction_score > 0.5 ? 'bg-yellow-400' : 'bg-green-500'
+                      (typeof item.prediction_score === 'number' && item.prediction_score > 0.75) ? 'bg-red-600' : 
+                      (typeof item.prediction_score === 'number' && item.prediction_score > 0.5) ? 'bg-yellow-400' : 'bg-green-500'
                     }`}
-                    style={{ width: `${item.prediction_score * 100}%` }}>
+                    style={{ width: `${(typeof item.prediction_score === 'number' && isFinite(item.prediction_score) ? item.prediction_score : 0) * 100}%` }}>
                   </div>
                 </div>
-                <span className="text-xs mt-1 block">{(item.prediction_score * 100).toFixed(2)}%</span>
+                <span className="text-xs mt-1 block">{(() => {
+                  const val = (typeof item.prediction_score === 'number' && isFinite(item.prediction_score)) ? item.prediction_score : 0;
+                  return `${(val * 100).toFixed(2)}%`;
+                })()}</span>
               </td>
             </tr>
           ))}
